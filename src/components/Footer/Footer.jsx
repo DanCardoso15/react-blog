@@ -1,7 +1,7 @@
 function Footer() {
     return (
         <footer>
-            <h4>Criado por Danilo Cardoso</h4>
+            <p>Criado por <strong>Danilo Cardoso</strong>.</p>
         </footer>
     );
 }
