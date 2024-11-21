@@ -1,25 +1,27 @@
-import Header from "./components/Header/Header";
-import UserCard from "./components/UserCard/UserCard";
-import Footer from "./components/Footer/Footer";
-import imgJoao from "./assets/Joao.png";
-import imgMaria from "./assets/Maria.png";
-import Post from "./components/Post/Post";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home/Home";
+import Users from "./pages/Users/Users";
+import Sac from "./pages/Sac/Sac";
+import Sobre from "./pages/Sobre/Sobre";
+import NotFound from "./pages/NotFound/NotFound";
 
 function Hello() {
   return <h2>Olá meu amigo. Como vai?</h2> // Se a função retorna um HTML, então ele é um componente
+      // <h1>Hello World!</h1>
 }
 
 function App() {
   return (
-    <>
-      {/* <h1>Hello World!</h1> */}
-      <Header />
-      <Post />
-      <UserCard avatar={imgMaria} nome="Maria de Souza" idade={30} />
-      <UserCard avatar={imgJoao} nome="João Guimarães" idade={45} ocupacao="Engenheiro Civil" /> {/* Quando não queremos passar uma propriedade que não é String/texto, usamos {chaves} entre o valor */}
-      <Footer />
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/Users" element={<Users />} />
+        <Route path="/Sac" element={<Sac />} />
+        <Route path="/Sobre" element={<Sobre />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
