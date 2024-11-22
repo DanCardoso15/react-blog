@@ -47,6 +47,9 @@ function Post (props) {
             }}>
                 Descurtidas: {descurtidas}
             </button>
+            <button onClick={() => {
+                window.alert(props.conteudo);
+            }}>Detalhes</button>
             {curtidas > 10 ? <p>Post Popular!</p> : null}
         </div>
     );
