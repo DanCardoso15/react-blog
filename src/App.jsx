@@ -4,6 +4,7 @@ import Users from "./pages/Users/Users";
 import Sac from "./pages/Sac/Sac";
 import Sobre from "./pages/Sobre/Sobre";
 import NotFound from "./pages/NotFound/NotFound";
+import Login from "./pages/Login/Login";
 
 function Hello() {
   return <h2>Olá meu amigo. Como vai?</h2> // Se a função retorna um HTML, então ele é um componente
@@ -18,6 +19,7 @@ function App() {
         <Route path="/Users" element={<Users />} />
         <Route path="/Sac" element={<Sac />} />
         <Route path="/Sobre" element={<Sobre />} />
+        <Route path="/login" element={<Login />}/>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

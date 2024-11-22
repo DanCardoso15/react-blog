@@ -17,6 +17,9 @@ function Header() {
                 <li>
                     <Link to="/Sobre">Sobre</Link>
                 </li>
+                <li>
+                    <Link to="/Login">Login</Link>
+                </li>
             </ul>
         </header>
     );
