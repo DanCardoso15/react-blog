@@ -1,15 +1,15 @@
-import { addDoc, collection, getDocs, getFirestore }  from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, updateDoc }  from "firebase/firestore";
 import app from "./firebase.config";
 
 const db = getFirestore(app);
 
-async function salvar(dados) {
+async function salvarUs(dados) {
     const usuarios = collection(db, "usuários");
     await addDoc(usuarios, dados);
     console.log("Usuário criado.");
 }
 
-async function buscar() {
+async function buscarUs() {
     const usuarios = collection(db, "usuários");
     const resultados = await getDocs(usuarios);
     const objetos = [];
@@ -22,7 +22,19 @@ async function buscar() {
     return objetos;
 }
 
-export { salvar, buscar };
+async function removerUs(id) {
+    const usuarios = collection(db, "usuários");
+    const documento = doc(usuarios, id)
+    await deleteDoc(documento);
+}
+
+async function editarUs(id, dados) {
+    const usuarios = collection(db, "usuários");
+    const documento = doc(usuarios, id);
+    await updateDoc(documento, dados);
+}
+
+export { salvarUs, buscarUs, removerUs, editarUs};
 
 // await só funciona dentro de uma função assincrona
 // toda função assincrona retorna uma "Promise/Promessa"

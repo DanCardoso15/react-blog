@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { buscar, salvar } from "../../firebase/firestore";
+import { buscarUs, editarUs, removerUs, salvarUs } from "../../firebase/firestore";
 import { useEffect, useState } from "react";
 
 function Signup() {
@@ -7,14 +7,34 @@ function Signup() {
     const { handleSubmit, register, reset } = useForm();
 
     function salvarUsuario(dados) {
-        salvar(dados);
+        salvarUs(dados);
         reset(); // reset() -> Limpa o formulário para incluir novas informações nele 
         buscarUsuarios();
     }
 
     async function buscarUsuarios() {
-        const usuarios = await buscar();
+        const usuarios = await buscarUs();
         setUsuarios(usuarios);
+    }
+
+    async function removerUsuario(id) {
+        await removerUs(id);
+        buscarUsuarios();
+    }
+
+    async function editarUsuario(id) {
+        const nome = window.prompt("Digite o nome:");
+        if(nome) {
+            const dados = { nome };
+            await editarUs(id, dados);
+            buscarUsuarios();
+        }
+        const email = window.prompt("Digite o email:")
+        if(email) {
+            const dados = { email };
+            await editarUs(id, dados);
+            buscarUsuarios();
+        }
     }
 
     useEffect(() => {
@@ -27,9 +47,27 @@ function Signup() {
         <form onSubmit={handleSubmit(salvarUsuario)}>
             <h1>Cadastra-se</h1>
 
-             <ul>
-                {usuarios.map(us => <li key={us.id}>{us.nome}</li>)}
-            </ul> 
+             <table border="2">
+                <tbody>
+                    {usuarios.map(us => (
+                        <tr key={us.id}>
+                            <td>{us.id}</td>
+                            <td>{us.nome}</td>
+                            <td>{us?.email}</td> 
+                            <td>
+                                <button type="button" onClick={() => removerUsuario(us.id)}>
+                                    Excluir
+                                </button>
+                            </td>
+                            <td>
+                                <button type="button" onClick={() => editarUsuario(us.id)}>
+                                    Editar
+                                </button>
+                            </td>
+                        </tr>
+                        ))}
+                </tbody>
+            </table> 
 
             <div>
                 <label htmlFor="nome">Nome</label>
