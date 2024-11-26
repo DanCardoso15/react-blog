@@ -24,14 +24,9 @@ function Signup() {
 
     async function editarUsuario(id) {
         const nome = window.prompt("Digite o nome:");
-        if(nome) {
-            const dados = { nome };
-            await editarUs(id, dados);
-            buscarUsuarios();
-        }
-        const email = window.prompt("Digite o email:")
-        if(email) {
-            const dados = { email };
+        const email = window.prompt("Digite o email:");
+        if(nome && email) {
+            const dados = { nome, email };
             await editarUs(id, dados);
             buscarUsuarios();
         }
