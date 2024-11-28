@@ -1,90 +1,81 @@
-// Importações de dependências e componentes
 import { useEffect, useState } from "react";
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import Post from "../../components/Post/Post";
+import { buscarPst, salvarPst } from "../../firebase/firestore";
 import { useForm } from "react-hook-form";
-import { buscarPt, deletarPt, salvarPt, editarPt } from "../../firebase/firestore";
+import { useAuth } from "../../context/Auth";
+import { Navigate } from "react-router-dom";
 
-// Componente principal Home
-function Home() {
-  // Estado para armazenar os posts
-  const [post, setPost] = useState([]);
-  // Hooks para manipular formulário
-  const { handleSubmit, register, reset } = useForm();
 
-  // Função para salvar um novo post
-  function salvarPost(dados) {
-    salvarPt(dados); // Salva os dados no Firestore
-    reset(); // Reseta os campos do formulário
-    buscarPost(); // Atualiza a lista de posts
-  }
+function FormPost({ buscarPosts }) {
 
-  // Função para buscar todos os posts
-  async function buscarPost() {
-    const post = await buscarPt(); // Busca os posts no Firestore
-    setPost(post); // Atualiza o estado com os posts
-  }
+    const { handleSubmit, register, reset } = useForm();
 
-  // Função para deletar um post pelo ID
-  async function deletarPost(id) {
-    await deletarPt(id); // Deleta o post no Firestore
-    buscarPost(); // Atualiza a lista de posts
-  }
+    async function salvarPost(dados) {
+        await salvarPst(dados);
+        buscarPosts();
+        reset();
+    } 
 
-  // Função para editar um post pelo ID
-  async function editarPost(id) {
-    const titulo = window.prompt("Digite o novo título:"); // Solicita o novo título ao usuário
-    if (titulo) {
-      const dados = { titulo }; // Cria o objeto com o novo título
-      await editarPt(id, dados); // Atualiza o Firestore
-      buscarPost(); // Atualiza a lista de posts
-    }
-    const post = window.prompt("Digite o novo conteúdo:"); // Solicita o novo conteúdo ao usuário
-    if (post) {
-      const dados = { post }; // Cria o objeto com o novo conteúdo
-      await editarPt(id, dados); // Atualiza o Firestore
-      buscarPost(); // Atualiza a lista de posts
-    }
-  }
-
-  // Hook useEffect para buscar posts ao carregar o componente
-  useEffect(() => {
-    buscarPost(); // Carrega os posts inicialmente
-  }, []);
-
-  // Renderização do componente
-  return (
-    <form onSubmit={handleSubmit(salvarPost)}>
-      <h1>Criar Post</h1>
-
-      {/* Lista os posts existentes */}
-      {post.map((pt) => (
-        <div key={pt.id}>
-          <h2>{pt.titulo}</h2>
-          <p>{pt.post}</p>
-          <button type="button" onClick={() => editarPost(pt.id)}>
-            Editar
-          </button>
-          <button type="button" onClick={() => deletarPost(pt.id)}>
-            Deletar
-          </button>
-        </div>
-      ))}
-
-      {/* Formulário para criar um novo post */}
-      <div>
-        <label htmlFor="titulo">Titulo</label>
-        <input type="text" id="titulo" {...register("titulo")} />
-      </div>
-      <div>
-        <label htmlFor="post">Post</label>
-        <input type="text" id="post" {...register("post")} />
-      </div>
-      <button>Criar</button>
-    </form>
-  );
+    return (
+        <form onSubmit={handleSubmit(salvarPost)}>
+            <div>
+                <label htmlFor="titulo">Titulo</label>
+                <input type="text" id="titulo" {...register("titulo")} />
+            </div>
+            <div>
+                <label htmlFor="conteudo">Conteudo</label>
+                <input type="text" id="conteudo" {...register("conteudo")} />
+            </div>
+            <div>
+                <label htmlFor="autor">Autor</label>
+                <input type="text" id="autor" {...register("autor")} />
+            </div>
+            <div>
+                <label htmlFor="imagem">Imagem</label>
+                <input type="text" id="imagem" {...register("imagem")} />
+            </div>
+            <button>Postar</button>
+        </form>
+    )
 }
+
+
+function Home() {
+
+    const [posts, setPosts] = useState([]);
+    const { autenticado } = useAuth();
+
+    async function buscarPosts() {
+        const posts = await buscarPst()
+        setPosts(posts);
+    }
+
+    useEffect(() => {
+        buscarPosts();
+    }, []);
+
+    if (!autenticado) return <Navigate to="/login" />;
+
+    return (
+        <div>
+            <Header />
+
+            <h1>Home</h1>
+
+            <FormPost buscarPosts={buscarPosts} />
+
+            {posts.map(post => {
+                return <Post {...post} key={post.id} buscarPosts={buscarPosts} />
+            })}
+
+            <Footer />
+        </div>
+    )
+}
+
+export default Home;
 
 // const post1 = {
 //     titulo: "Soulcode ganha importante prêmio após capacitar milhares de alunos",
@@ -143,5 +134,3 @@ function Home() {
 //     )
 // }
 
-// Exporta o componente Home
-export default Home;

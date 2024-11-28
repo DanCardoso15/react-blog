@@ -1,6 +1,10 @@
 // import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Header from "../../components/Header/Header";
+import { login, loginGoogle } from "../../firebase/authentication";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/Auth";
+import { Button } from "react-bootstrap";
 
 function Login() {
 
@@ -23,10 +27,34 @@ function Login() {
     // }
 
     const { handleSubmit, register } = useForm();
+    const navigate = useNavigate();
+    const { setAutenticado } = useAuth();
     
-    function enviarFormular(dados) {
-        console.log("Formulário enviado.");
-        console.log(dados);
+    async function enviarFormular({ email, senha }) {
+        try{
+            await login(email, senha);
+            setAutenticado(true);
+            navigate("/"); // Home
+        } catch (erro) {
+            if(erro.code == "auth/invalid-credential") {
+                window.alert("Email ou Senha inválidos.");
+            } else {
+                window.alert("Algo deu errado.");
+            }
+            console.error({...erro});
+        }
+    }
+
+    async function entrarComGoogle() {
+        try {
+            const usuario = await loginGoogle();
+            console.log(usuario);
+            setAutenticado(true);
+            navigate("/")
+        } catch(erro) {
+            console.error(erro);
+            window.alert("Algo deu errado.")
+        }
     }
 
     return (
@@ -49,9 +77,13 @@ function Login() {
                     <input type="password" id="senha" {...register("senha", { required: true, maxLength: 15 })} /* onChange={alterarFormulario} */ />
                 </div>
 
-                <button>
+                <Button type="submit" variant="dark">
                     Entrar
-                </button>
+                </Button>
+
+                <Button variant="danger" type="button" onClick={entrarComGoogle}> 
+                    Entrar com Google
+                </Button>
             </form>
         </div>
     );

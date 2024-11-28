@@ -4,8 +4,15 @@ import imgJoao from "../../assets/Joao.png";
 import imgMaria from "../../assets/Maria.png";
 import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
+import { useAuth } from "../../context/Auth";
+import { Navigate } from 'react-router-dom';
 
 function Users() {
+
+  const { autenticado } = useAuth();
+
+  if (!autenticado) return <Navigate to="/login" />;
+
   return (
     <div>
       <Header />

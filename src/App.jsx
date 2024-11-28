@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import Users from "./pages/Users/Users";
@@ -6,6 +7,7 @@ import Sobre from "./pages/Sobre/Sobre";
 import NotFound from "./pages/NotFound/NotFound";
 import Login from "./pages/Login/Login";
 import Signup from "./pages/Signup/Signup";
+import { AuthProvider } from "./context/Auth";
 
 function Hello() {
   return <h2>Olá meu amigo. Como vai?</h2> // Se a função retorna um HTML, então ele é um componente
@@ -14,6 +16,7 @@ function Hello() {
 
 function App() {
   return (
+    <AuthProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -25,6 +28,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
+    </AuthProvider>
   );
 }
 

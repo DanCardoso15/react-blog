@@ -1,58 +1,71 @@
-import Titulo from "../Titulo/Titulo";
 import { useState } from "react";
-import "./style.css";
+import Titulo from "../Titulo/Titulo";
+import { editarPst, removerPst } from "../../firebase/firestore";
+import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
 
-function Post (props) {
-    const [curtidas, setCurtidas] = useState(0);  // [estado, função modificadora do estado]
-    const [descurtidas, setDescurtidas] = useState(0);
-    const [carregando, setCarregando] = useState(true);
+function Post(props) {
+  const [curtidas, setCurtidas] = useState(0); // [estado, funcao modificadora]
+  const [descurtidas, setDescurtidas] = useState(0);
 
-    setTimeout(() => {
-        setCarregando(false);
-    }, 3000);
+  async function removerPost() {
+    await removerPst(props.id);
+    props.buscarPosts();
+  }
 
-    if (carregando) {
-        return (
-            <div className="post">
-                <p>Carregando...</p>
-            </div>
-        );
+  async function editarPost() {
+    const titulo = window.prompt("Digite o tiulo", props.titulo);
+    if (titulo) {
+      await editarPst(props.id, { titulo });
+      props.buscarPosts();
     }
+  }
 
+  function adicionarCurtida() {
+    setCurtidas(curtidas + 1);
+  }
 
-    function adicionarCurtida() {
-        setCurtidas(curtidas+1);
-    }
+  return (
+    <div className="post" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}} >
+    <Card style={{ width: '75rem' }}>
 
-    // function adicionarDescurtidas() {
-    //     setDescurtidas(descurtidas+1);
-    // }
+      <Card.Header as="h5">{props.titulo}</Card.Header>
+        
+        <Card.Body>
+          <img src={props.imagem} alt="Publicação" width={400} />
 
-    return (
-        <div className="post">
-            {/* <Titulo conteudo="Dolar sobe para R$ 6 após Trump ganhar as eleições" /> */}
-            <Titulo>{props.titulo}</Titulo>
-            <img src={props.imagem} alt="Publicação SoulCode" width={400} />
-            <p>
-                {props.conteudo}
-            </p>
-            <p>
-                <small>{props.autor}</small>
-            </p>
-            <button onClick={adicionarCurtida}>
-                Curtidas: {curtidas}
-            </button>
-            <button onClick={() => {
-                setDescurtidas(descurtidas+1);
-            }}>
-                Descurtidas: {descurtidas}
-            </button>
-            <button onClick={() => {
-                window.alert(props.conteudo);
-            }}>Detalhes</button>
-            {curtidas > 10 ? <p>Post Popular!</p> : null}
-        </div>
-    );
+          <Card.Text>{props.conteudo}</Card.Text>
+          <Card.Text>
+            <small>{props.autor}</small>
+          </Card.Text>
+
+          <Button variant="outline-secondary" onClick={adicionarCurtida}>Curtidas: {curtidas}</Button>
+
+          <Button variant="outline-secondary"
+            onClick={() => {
+              setDescurtidas(descurtidas + 1);
+            }}
+          >
+            Descurtidas: {descurtidas}
+          </Button>
+
+          <Button variant="outline-secondary"
+            onClick={() => {
+              window.alert(props.conteudo);
+            }}
+          >
+            Detalhes
+          </Button>
+
+          <Button variant="outline-secondary" onClick={removerPost}>Excluir</Button>
+
+          <Button variant="outline-secondary" onClick={editarPost}>Editar</Button>
+
+          {curtidas > 10 ? <p>Post Popular!</p> : null}
+        </Card.Body>
+    </Card>
+    </div>
+  );
 }
 
 export default Post;
