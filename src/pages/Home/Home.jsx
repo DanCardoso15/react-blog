@@ -6,73 +6,76 @@ import { buscarPst, salvarPst } from "../../firebase/firestore";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../context/Auth";
 import { Navigate } from "react-router-dom";
+import { Button, Container, Form } from "react-bootstrap";
 
 
 function FormPost({ buscarPosts }) {
+  const { handleSubmit, register, reset } = useForm();
 
-    const { handleSubmit, register, reset } = useForm();
+  async function salvarPost(dados) {
+    await salvarPst(dados);
+    buscarPosts();
+    reset();
+  }
 
-    async function salvarPost(dados) {
-        await salvarPst(dados);
-        buscarPosts();
-        reset();
-    } 
+  return (
+    <Form onSubmit={handleSubmit(salvarPost)}>
+      <Form.Group className="mb-3" controlId="titulo">
+        <Form.Label>Titulo</Form.Label>
+        <Form.Control type="text" {...register("titulo")}/>
+      </Form.Group>
 
-    return (
-        <form onSubmit={handleSubmit(salvarPost)}>
-            <div>
-                <label htmlFor="titulo">Titulo</label>
-                <input type="text" id="titulo" {...register("titulo")} />
-            </div>
-            <div>
-                <label htmlFor="conteudo">Conteudo</label>
-                <input type="text" id="conteudo" {...register("conteudo")} />
-            </div>
-            <div>
-                <label htmlFor="autor">Autor</label>
-                <input type="text" id="autor" {...register("autor")} />
-            </div>
-            <div>
-                <label htmlFor="imagem">Imagem</label>
-                <input type="text" id="imagem" {...register("imagem")} />
-            </div>
-            <button>Postar</button>
-        </form>
-    )
+      <Form.Group className="mb-3" controlId="conteudo">
+        <Form.Label>Conteudo</Form.Label>
+        <Form.Control type="text" {...register("conteudo")}/>
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="autor">
+        <Form.Label>Autor</Form.Label>
+        <Form.Control type="text" {...register("autor")}/>
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="imagem">
+        <Form.Label>Imagem</Form.Label>
+        <Form.Control type="text" {...register("imagem")}/>
+      </Form.Group>
+
+      <Button type="submit">Postar</Button>
+    </Form>
+  );
 }
 
 
 function Home() {
+  const [posts, setPosts] = useState([]);
+  const { autenticado } = useAuth();
 
-    const [posts, setPosts] = useState([]);
-    const { autenticado } = useAuth();
+  async function buscarPosts() {
+    const posts = await buscarPst();
+    setPosts(posts);
+  }
 
-    async function buscarPosts() {
-        const posts = await buscarPst()
-        setPosts(posts);
-    }
+  useEffect(() => {
+    buscarPosts();
+  }, []);
 
-    useEffect(() => {
-        buscarPosts();
-    }, []);
+  if (!autenticado) return <Navigate to="/login" />;
 
-    if (!autenticado) return <Navigate to="/login" />;
+  return (
+    <div>
+      <Header />
+      <Container>
+        <h1>Home</h1>
 
-    return (
-        <div>
-            <Header />
+        <FormPost buscarPosts={buscarPosts} />
 
-            <h1>Home</h1>
-
-            <FormPost buscarPosts={buscarPosts} />
-
-            {posts.map(post => {
-                return <Post {...post} key={post.id} buscarPosts={buscarPosts} />
-            })}
-
-            <Footer />
-        </div>
-    )
+        {posts.map((post) => {
+          return <Post {...post} key={post.id} buscarPosts={buscarPosts} />;
+        })}
+      </Container>
+      <Footer />
+    </div>
+  );
 }
 
 export default Home;

@@ -26,22 +26,29 @@ function Post(props) {
   }
 
   return (
-    <div className="post" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}} >
-    <Card style={{ width: '75rem' }}>
+    <div className="post">
+      <Card style={{ width: "22rem" }}>
+        <Card.Header as="h5">{props.titulo}</Card.Header>
 
-      <Card.Header as="h5">{props.titulo}</Card.Header>
-        
         <Card.Body>
-          <img src={props.imagem} alt="Publicação" width={400} />
+          <Card.Img src={props.imagem} alt="Publicação" />
 
           <Card.Text>{props.conteudo}</Card.Text>
           <Card.Text>
-            <small>{props.autor}</small>
+            <small className="fw-bold">{props.autor}</small>
           </Card.Text>
 
-          <Button variant="outline-secondary" onClick={adicionarCurtida}>Curtidas: {curtidas}</Button>
+          <Button
+            variant="outline-secondary"
+            size="sm"
+            onClick={adicionarCurtida}
+          >
+            Curtidas: {curtidas}
+          </Button>
 
-          <Button variant="outline-secondary"
+          <Button
+            variant="outline-secondary"
+            size="sm"
             onClick={() => {
               setDescurtidas(descurtidas + 1);
             }}
@@ -49,7 +56,9 @@ function Post(props) {
             Descurtidas: {descurtidas}
           </Button>
 
-          <Button variant="outline-secondary"
+          <Button
+            variant="outline-secondary"
+            size="sm"
             onClick={() => {
               window.alert(props.conteudo);
             }}
@@ -57,13 +66,17 @@ function Post(props) {
             Detalhes
           </Button>
 
-          <Button variant="outline-secondary" onClick={removerPost}>Excluir</Button>
+          <Button variant="outline-secondary" size="sm" onClick={removerPost}>
+            Excluir
+          </Button>
 
-          <Button variant="outline-secondary" onClick={editarPost}>Editar</Button>
+          <Button variant="outline-secondary" size="sm" onClick={editarPost}>
+            Editar
+          </Button>
 
           {curtidas > 10 ? <p>Post Popular!</p> : null}
         </Card.Body>
-    </Card>
+      </Card>
     </div>
   );
 }

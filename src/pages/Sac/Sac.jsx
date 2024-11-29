@@ -2,6 +2,7 @@ import React from 'react'
 import Form from '../../components/Form/Form';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
+import { Container } from 'react-bootstrap';
 
 const ajuda = [
   {
@@ -26,6 +27,7 @@ function Sac() {
   return (
     <div>
       <Header />
+      <Container>
       <h1>SAC</h1>
       <Form />
 
@@ -41,6 +43,7 @@ function Sac() {
       })}
 
       <Footer />
+      </Container>
     </div>
   );
 }
